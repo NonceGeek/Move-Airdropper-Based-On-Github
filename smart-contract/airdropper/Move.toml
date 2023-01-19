@@ -8,9 +8,11 @@ my_addr = "_"
 std = "0x1"
 aptos_framework = "0x1"
 chain_id = "0x1"
+aptos_token="0x3"
 
 [dependencies]
 MoveStdlib = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/move-stdlib/", rev="aptos-cli-v1.0.0" }
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/aptos-framework/", rev="aptos-cli-v1.0.0" }
+AptosToken = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/aptos-token/", rev="aptos-cli-v1.0.0" }
 # MoveStdlib = { local = "/Users/liaohua/aptos-core/aptos-move/framework/move-stdlib" }
 # AptosFramework = { local = "/Users/liaohua/aptos-core/aptos-move/framework/aptos-framework" }
