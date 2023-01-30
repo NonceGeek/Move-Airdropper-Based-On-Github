@@ -21,6 +21,7 @@ module my_addr::airdropper {
     const EOWNER_NOT_HAVING_ENOUGH_COIN: u64 = 3;
     const EOWNER_NOT_HAVING_ENOUGH_TOKEN: u64 = 4;
     const EAIRDROPER_NOT_RECEIVER: u64 = 5;
+    const ERROR_NOT_ENOUGH_LENGTH: u64 = 6;
 
     struct AirdropCap has key {
 		cap: SignerCapability,
@@ -109,36 +110,81 @@ module my_addr::airdropper {
 		};
     }
 
-    public entry fun airdrop_coins_script<CoinType>(
+    fun airdrop_coin<CoinType>(
+        sender: &signer,
+        receiver: address,
+        amount: u64,
+    ) acquires AirdropCap, AirdropItemsData {
+        let sender_addr = signer::address_of(sender);
+        let airdrop_signer_address = get_airdrop_signer_address();
+        let airdrop_items_data = borrow_global_mut<AirdropItemsData>(airdrop_signer_address);
+
+        // transfer
+        coin::transfer<CoinType>(sender, receiver, amount);
+
+        event::emit_event<AirdropCoinEvent>(
+            &mut airdrop_items_data.airdrop_coin_events,
+            AirdropCoinEvent { 
+                receiver_address: receiver,
+                sender_address: sender_addr,
+                coin_amount: amount,
+                timestamp: timestamp::now_seconds(),
+            },
+        );
+    }
+
+    public entry fun airdrop_coins_average_script<CoinType>(
         sender: &signer,
         receivers: vector<address>,
         unit_amount: u64,
-    ) acquires AirdropCap,  AirdropItemsData {
+    ) acquires AirdropCap, AirdropItemsData {
         let sender_addr = signer::address_of(sender);
         let length_receiver = vector::length(&receivers);
         // TODO [x] valid sender has enough coin
         assert!(coin::balance<CoinType>(sender_addr) >= length_receiver * unit_amount, error::invalid_argument(EOWNER_NOT_HAVING_ENOUGH_COIN));
 
-        let airdrop_signer_address = get_airdrop_signer_address();
-        let airdrop_items_data = borrow_global_mut<AirdropItemsData>(airdrop_signer_address);
+        let i = length_receiver;
+
+        while (i > 0) {
+            let receiver_address = vector::pop_back(&mut receivers);
+            airdrop_coin<CoinType>(sender, receiver_address, unit_amount);
+
+            i = i - 1;
+        }
+    }
+
+    public entry fun airdrop_coins_not_average_script<CoinType>(
+        sender: &signer,
+        receivers: vector<address>,
+        amounts: vector<u64>,
+    ) acquires AirdropCap, AirdropItemsData {
+        let sender_addr = signer::address_of(sender);
+        let length_receiver = vector::length(&receivers);
+        let length_amounts = vector::length(&amounts);
+
+        assert!(length_receiver == length_amounts, ERROR_NOT_ENOUGH_LENGTH);
+
+        let y = length_amounts;
+
+        // get total amount
+        let total_amount = 0;
+        let calculation_amounts = amounts;
+
+        while (y > 0) {
+            let amount = vector::pop_back(&mut calculation_amounts);
+            total_amount = total_amount + amount;
+            y = y - 1;
+        };
+
+        // TODO [x] valid sender has enough coin
+        assert!(coin::balance<CoinType>(sender_addr) >= total_amount, error::invalid_argument(EOWNER_NOT_HAVING_ENOUGH_COIN));
 
         let i = length_receiver;
 
         while (i > 0) {
             let receiver_address = vector::pop_back(&mut receivers);
-
-            // transfer
-            coin::transfer<CoinType>(sender, receiver_address, unit_amount);
-
-            event::emit_event<AirdropCoinEvent>(
-                &mut airdrop_items_data.airdrop_coin_events,
-                AirdropCoinEvent { 
-                    receiver_address,
-                    sender_address: sender_addr,
-                    coin_amount: unit_amount,
-                    timestamp: timestamp::now_seconds(),
-                },
-            );
+            let amount = vector::pop_back(&mut amounts);
+            airdrop_coin<CoinType>(sender, receiver_address, amount);
 
             i = i - 1;
         }
@@ -263,7 +309,7 @@ module my_addr::airdropper {
     }
 
     #[test(aptos_framework = @0x1, airdrop = @my_addr, sender = @0xAE, receiver_1 = @0xAF, receiver_2 = @0xB0)]
-    public fun test_airdrop_coins_script(aptos_framework: &signer, airdrop: &signer, sender: &signer, receiver_1: &signer, receiver_2: &signer) acquires AirdropCap, AirdropItemsData {
+    public fun test_airdrop_coins_average_script(aptos_framework: &signer, airdrop: &signer, sender: &signer, receiver_1: &signer, receiver_2: &signer) acquires AirdropCap, AirdropItemsData {
         // set timestamp
         timestamp::set_time_has_started_for_testing(aptos_framework);
 
@@ -282,7 +328,7 @@ module my_addr::airdropper {
 
         initialize_script(airdrop);
 
-        airdrop_coins_script<coin::FakeMoney>(
+        airdrop_coins_average_script<coin::FakeMoney>(
             sender,
             vector<address>[signer::address_of(receiver_1), signer::address_of(receiver_2)],
             150,
@@ -291,6 +337,37 @@ module my_addr::airdropper {
         assert!(coin::balance<coin::FakeMoney>(signer::address_of(sender)) == 0, 1);
         assert!(coin::balance<coin::FakeMoney>(signer::address_of(receiver_1)) == 150, 1);
         assert!(coin::balance<coin::FakeMoney>(signer::address_of(receiver_2)) == 150, 1);
+    }
+
+    #[test(aptos_framework = @0x1, airdrop = @my_addr, sender = @0xAE, receiver_1 = @0xAF, receiver_2 = @0xB0)]
+    public fun test_airdrop_coins_not_average_script(aptos_framework: &signer, airdrop: &signer, sender: &signer, receiver_1: &signer, receiver_2: &signer) acquires AirdropCap, AirdropItemsData {
+        // set timestamp
+        timestamp::set_time_has_started_for_testing(aptos_framework);
+
+        // create account
+        account::create_account_for_test(signer::address_of(aptos_framework));
+        account::create_account_for_test(signer::address_of(airdrop));
+        account::create_account_for_test(signer::address_of(sender));
+        account::create_account_for_test(signer::address_of(receiver_1));
+        account::create_account_for_test(signer::address_of(receiver_2));
+
+        coin::create_fake_money(aptos_framework, sender, 300);
+        coin::transfer<coin::FakeMoney>(aptos_framework, signer::address_of(sender), 300);
+
+        coin::register<coin::FakeMoney>(receiver_1);
+        coin::register<coin::FakeMoney>(receiver_2);
+
+        initialize_script(airdrop);
+
+        airdrop_coins_not_average_script<coin::FakeMoney>(
+            sender,
+            vector<address>[signer::address_of(receiver_1), signer::address_of(receiver_2)],
+            vector<u64>[100, 200],
+        );
+
+        assert!(coin::balance<coin::FakeMoney>(signer::address_of(sender)) == 0, 1);
+        assert!(coin::balance<coin::FakeMoney>(signer::address_of(receiver_1)) == 100, 1);
+        assert!(coin::balance<coin::FakeMoney>(signer::address_of(receiver_2)) == 200, 1);
     }
 
     #[test(aptos_framework = @0x1, airdrop = @my_addr, sender = @0xAE, receiver_1 = @0xAF, receiver_2 = @0xB0)]
