@@ -85,7 +85,7 @@ module my_addr::airdropper {
         airdrop_signer_address
     }
 
-    // call when deploy
+    // call after you deploy
     public entry fun initialize_script(sender: &signer) {
         let sender_addr = signer::address_of(sender);
 
@@ -136,18 +136,18 @@ module my_addr::airdropper {
     public entry fun airdrop_coins_average_script<CoinType>(
         sender: &signer,
         receivers: vector<address>,
-        unit_amount: u64,
+        uint_amount: u64,
     ) acquires AirdropCap, AirdropItemsData {
         let sender_addr = signer::address_of(sender);
         let length_receiver = vector::length(&receivers);
         // TODO [x] valid sender has enough coin
-        assert!(coin::balance<CoinType>(sender_addr) >= length_receiver * unit_amount, error::invalid_argument(EOWNER_NOT_HAVING_ENOUGH_COIN));
+        assert!(coin::balance<CoinType>(sender_addr) >= length_receiver * uint_amount, error::invalid_argument(EOWNER_NOT_HAVING_ENOUGH_COIN));
 
         let i = length_receiver;
 
         while (i > 0) {
             let receiver_address = vector::pop_back(&mut receivers);
-            airdrop_coin<CoinType>(sender, receiver_address, unit_amount);
+            airdrop_coin<CoinType>(sender, receiver_address, uint_amount);
 
             i = i - 1;
         }
