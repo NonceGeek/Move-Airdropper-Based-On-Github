@@ -8,13 +8,13 @@ module my_addr::airdropper {
     use std::error;
     use std::signer;
     use std::vector;
-    use std::option::{Self, Option};
+    use std::option::Option;
     use std::string::{String};
 
     use aptos_std::event::{Self, EventHandle};
     use aptos_std::table::{Self, Table};
 
-    use aptos_token::token::{Self, Token, TokenId};
+    use aptos_token::token::{Token, TokenId};
 
     const EAIRDROP_NOT_EXIST: u64 = 1;
     const EINVALID_OWNER: u64 = 2;
@@ -29,6 +29,7 @@ module my_addr::airdropper {
 
     struct AirdropCoinEvent has drop, store {
         sender_address: address,
+        description: String,
         coin_amount: u64,
         timestamp: u64,
         receiver_address: address,
@@ -112,6 +113,7 @@ module my_addr::airdropper {
 
     fun airdrop_coin<CoinType>(
         sender: &signer,
+        description: String,
         receiver: address,
         amount: u64,
     ) acquires AirdropCap, AirdropItemsData {
@@ -126,6 +128,7 @@ module my_addr::airdropper {
             &mut airdrop_items_data.airdrop_coin_events,
             AirdropCoinEvent { 
                 receiver_address: receiver,
+                description: description,
                 sender_address: sender_addr,
                 coin_amount: amount,
                 timestamp: timestamp::now_seconds(),
@@ -135,6 +138,7 @@ module my_addr::airdropper {
 
     public entry fun airdrop_coins_average_script<CoinType>(
         sender: &signer,
+        description: String,
         receivers: vector<address>,
         uint_amount: u64,
     ) acquires AirdropCap, AirdropItemsData {
@@ -147,7 +151,7 @@ module my_addr::airdropper {
 
         while (i > 0) {
             let receiver_address = vector::pop_back(&mut receivers);
-            airdrop_coin<CoinType>(sender, receiver_address, uint_amount);
+            airdrop_coin<CoinType>(sender, description, receiver_address, uint_amount);
 
             i = i - 1;
         }
@@ -155,6 +159,7 @@ module my_addr::airdropper {
 
     public entry fun airdrop_coins_not_average_script<CoinType>(
         sender: &signer,
+        description: String, 
         receivers: vector<address>,
         amounts: vector<u64>,
     ) acquires AirdropCap, AirdropItemsData {
@@ -184,119 +189,7 @@ module my_addr::airdropper {
         while (i > 0) {
             let receiver_address = vector::pop_back(&mut receivers);
             let amount = vector::pop_back(&mut amounts);
-            airdrop_coin<CoinType>(sender, receiver_address, amount);
-
-            i = i - 1;
-        }
-    }
-
-    fun airdrop_token(
-        sender: &signer,
-        token_id: TokenId,
-        receiver: address,
-        amount: u64,
-    ) acquires AirdropCap, AirdropItemsData {
-        let sender_addr = signer::address_of(sender);
-
-        let airdrop_id = get_unique_airdrop_id();
-        let token = token::withdraw_token(sender, token_id, amount);
-
-        let airdrop_signer_address = get_airdrop_signer_address();
-        let airdrop_items_data = borrow_global_mut<AirdropItemsData>(airdrop_signer_address);
-        let airdrop_items = &mut airdrop_items_data.airdrop_items;
-
-        event::emit_event<AirdropTokenEvent>(
-            &mut airdrop_items_data.airdrop_token_events,
-            AirdropTokenEvent { 
-                airdrop_id,
-                receiver_address: receiver,
-                token_id,
-                amount,
-                sender_address: sender_addr,
-                timestamp: timestamp::now_seconds(),
-            },
-        );
-
-        table::add(airdrop_items, airdrop_id, AirdropTokenItem {
-            receiver_address: receiver,
-            airdrop_id,
-            locked_token: option::some(token),
-            timestamp: timestamp::now_seconds(),
-            sender_address: sender_addr,
-        });
-
-    }
-
-    public entry fun airdrop_tokens_script(
-        sender: &signer,
-        receivers: vector<address>,
-        creator: address,
-        collection_name: String,
-        token_name: String,
-        property_version: u64,
-        amount: u64,
-    ) acquires AirdropCap, AirdropItemsData {
-        let sender_addr = signer::address_of(sender);
-        let length_receiver = vector::length(&receivers);
-        let token_id = token::create_token_id_raw(creator, collection_name, token_name, property_version);
-
-        // TODO [x] valid sender has enough token
-        assert!(token::balance_of(sender_addr, token_id) >= length_receiver * amount, error::invalid_argument(EOWNER_NOT_HAVING_ENOUGH_TOKEN));
-
-        // let airdrop_signer_address = get_airdrop_signer_address();
-        // let airdrop_items_data = borrow_global_mut<AirdropItemsData>(airdrop_signer_address);
-        // let airdrop_items = &mut airdrop_items_data.airdrop_items;
-
-        let i = length_receiver;
-
-        while (i > 0) {
-            let receiver_address = vector::pop_back(&mut receivers);
-            airdrop_token(sender, token_id, receiver_address, amount);
-            i = i - 1;
-        }
-    }
-
-    public entry fun claim_tokens_script(
-        sender: &signer, 
-        airdrop_ids: vector<u64>
-    ) acquires AirdropCap, AirdropItemsData {
-        let sender_addr = signer::address_of(sender);
-        let airdrop_signer_address = get_airdrop_signer_address();
-        let airdrop_items_data = borrow_global_mut<AirdropItemsData>(airdrop_signer_address);
-        let airdrop_items = &mut airdrop_items_data.airdrop_items;
-
-        let length_airdrop_ids = vector::length(&airdrop_ids);
-        let i = length_airdrop_ids;
-
-        while (i > 0) {
-            let airdrop_id = vector::pop_back(&mut airdrop_ids);
-            // TODO [ ] airdrop item has not been claimed
-            // TODO [ ] airdrop item is owner by sender
-            assert!(table::contains(airdrop_items, airdrop_id), error::invalid_argument(EAIRDROP_NOT_EXIST));
-            let airdrop_item = table::borrow_mut(airdrop_items, airdrop_id);
-
-            assert!(airdrop_item.receiver_address == sender_addr, error::invalid_argument(EAIRDROPER_NOT_RECEIVER));
-
-            let token = option::extract(&mut airdrop_item.locked_token);
-            let token_amount = token::get_token_amount(&token);
-            let token_id = token::get_token_id(&token);
-
-            token::deposit_token(sender, token);
-
-            event::emit_event<ClaimTokenEvent>(
-                &mut airdrop_items_data.claim_token_events,
-                ClaimTokenEvent { 
-                    token_id,
-                    airdrop_id,
-                    amount: token_amount,
-                    claimer_address: sender_addr,
-                    sender_address: airdrop_item.sender_address,
-                    timestamp: timestamp::now_seconds(),
-                },
-            );
-
-            let AirdropTokenItem {airdrop_id: _, receiver_address: _, locked_token, timestamp: _, sender_address: _} = table::remove(airdrop_items, airdrop_id);
-            option::destroy_none(locked_token);
+            airdrop_coin<CoinType>(sender, description, receiver_address, amount);
 
             i = i - 1;
         }
@@ -330,6 +223,7 @@ module my_addr::airdropper {
 
         airdrop_coins_average_script<coin::FakeMoney>(
             sender,
+            b"test",
             vector<address>[signer::address_of(receiver_1), signer::address_of(receiver_2)],
             150,
         );
@@ -361,6 +255,7 @@ module my_addr::airdropper {
 
         airdrop_coins_not_average_script<coin::FakeMoney>(
             sender,
+            b"test",
             vector<address>[signer::address_of(receiver_1), signer::address_of(receiver_2)],
             vector<u64>[100, 200],
         );
@@ -369,71 +264,4 @@ module my_addr::airdropper {
         assert!(coin::balance<coin::FakeMoney>(signer::address_of(receiver_1)) == 100, 1);
         assert!(coin::balance<coin::FakeMoney>(signer::address_of(receiver_2)) == 200, 1);
     }
-
-    #[test(aptos_framework = @0x1, airdrop = @my_addr, sender = @0xAE, receiver_1 = @0xAF, receiver_2 = @0xB0)]
-    public fun test_airdrop_tokens_script(aptos_framework: &signer, airdrop: &signer, sender: &signer, receiver_1: &signer)  acquires AirdropCap, AirdropItemsData{
-        // set timestamp
-        timestamp::set_time_has_started_for_testing(aptos_framework);
-
-        // create account
-        account::create_account_for_test(signer::address_of(aptos_framework));
-        account::create_account_for_test(signer::address_of(airdrop));
-        account::create_account_for_test(signer::address_of(sender));
-        account::create_account_for_test(signer::address_of(receiver_1));
-
-        initialize_script(airdrop);
-
-        let token_id = token::create_collection_and_token(
-            sender,
-            2,
-            2,
-            2,
-            vector<String>[],
-            vector<vector<u8>>[],
-            vector<String>[],
-            vector<bool>[false, false, false],
-            vector<bool>[false, false, false, false, false],
-        );
-
-        assert!(token::balance_of(signer::address_of(sender), token_id) == 2, 1);
-
-        airdrop_token(sender, token_id, signer::address_of(receiver_1), 1);
-
-        assert!(token::balance_of(signer::address_of(sender), token_id) == 1, 1);
-    }
-
-    #[test(aptos_framework = @0x1, airdrop = @my_addr, sender = @0xAE, receiver_1 = @0xAF)]
-    public fun test_claim_tokens_script(aptos_framework: &signer, airdrop: &signer, sender: &signer, receiver_1: &signer) acquires AirdropCap, AirdropItemsData {
-        // set timestamp
-        timestamp::set_time_has_started_for_testing(aptos_framework);
-
-        // create account
-        account::create_account_for_test(signer::address_of(aptos_framework));
-        account::create_account_for_test(signer::address_of(airdrop));
-        account::create_account_for_test(signer::address_of(sender));
-        account::create_account_for_test(signer::address_of(receiver_1));
-
-        initialize_script(airdrop);
-
-        let token_id = token::create_collection_and_token(
-            sender,
-            2,
-            2,
-            2,
-            vector<String>[],
-            vector<vector<u8>>[],
-            vector<String>[],
-            vector<bool>[false, false, false],
-            vector<bool>[false, false, false, false, false],
-        );
-
-        assert!(token::balance_of(signer::address_of(sender), token_id) == 2, 1);
-
-        airdrop_token(sender, token_id, signer::address_of(receiver_1), 1);
-        let airdrop_id = get_unique_airdrop_id();
-        claim_tokens_script(receiver_1, vector<u64>[airdrop_id - 1]);
-
-        assert!(token::balance_of(signer::address_of(sender), token_id) == 1, 1);
-        assert!(token::balance_of(signer::address_of(receiver_1), token_id) == 1, 1);
-    }	
 }

@@ -1,47 +1,25 @@
 import {
   DAPP_ADDRESS,
-  APTOS_FAUCET_URL,
-  APTOS_NODE_URL,
   MODULE_NAME,
   MODULE_URL
 } from "../config/constants";
 import { useWallet } from "@manahippo/aptos-wallet-adapter";
-import { MoveResource } from "@martiandao/aptos-web3-bip44.js/dist/generated";
 import { useState } from "react";
 import React from "react";
-import {
-  AptosAccount,
-  WalletClient,
-  HexString,
-  AptosClient,
-} from "@martiandao/aptos-web3-bip44.js";
-
-import { CodeBlock } from "../components/CodeBlock";
-
-import newAxios from "../utils/axios_utils";
-
-import Select from 'react-select';
-import { sign } from "crypto";
 
 // import { TypeTagVector } from "@martiandao/aptos-web3-bip44.js/dist/aptos_types";
 // import {TypeTagParser} from "@martiandao/aptos-web3-bip44.js/dist/transaction_builder/builder_utils";
 export default function Home() {
-  const options = [
-    { value: 'ethereum', label: 'ethereum' },
-    { value: 'polygon', label: 'polygon' },
-  ];
-  const [selectedOption, setSelectedOption] = useState(null);
 
   const { account, signAndSubmitTransaction } = useWallet();
-  const client = new WalletClient(APTOS_NODE_URL, APTOS_FAUCET_URL);
-  const [resource, setResource] = React.useState<MoveResource>();
-  const [resource_v2, setResourceV2] = React.useState();
   const [formInput, updateFormInput] = useState<{
     addresses: Array<string>;
+    description: string,
     moneys: Array<number>;
     money: number
   }>({
     addresses: [],
+    description: "a simple airdrop!",
     moneys: [],
     money: 0
   });
@@ -53,16 +31,52 @@ export default function Home() {
     );
   }
 
+  async function airdrop_coins_not_average_script() {
+    await signAndSubmitTransaction(
+      do_airdrop_coins_not_average_script(),
+      { gas_unit_price: 100 }
+    );
+  }
+
+  // TODO [x] Generate Funcs by ABI
   function do_airdrop_coins_average_script() {
+    const { addresses, description, moneys, money } = formInput;
     return {
       type: "entry_function_payload",
       function: DAPP_ADDRESS + "::airdropper::airdrop_coins_average_script",
       type_arguments: ["0x1::aptos_coin::AptosCoin"],
       arguments: [
-        ["0x2df41622c0c1baabaa73b2c24360d205e23e803959ebbcb0e5b80462165893ed"],
-        100_000_000
+        description,
+        addresses,
+        money,
       ],
     };
+  }
+
+  function do_airdrop_coins_not_average_script() {
+    const { addresses, description, moneys, money } = formInput;
+    return {
+      type: "entry_function_payload",
+      function: DAPP_ADDRESS + "::airdropper::airdrop_coins_not_average_script",
+      type_arguments: ["0x1::aptos_coin::AptosCoin"],
+      arguments: [
+        description,
+        addresses,
+        moneys
+      ],
+    };
+  }
+
+  function apt_to_octos(num_apt: number){
+    return (num_apt * 100_000_000)
+  }
+  function str_to_int_batched(arr: Array<string>){
+    var i;
+    var arr_int = [];
+    for(i in arr){
+      arr_int.push(apt_to_octos(parseFloat(arr[i])));
+    }
+    return arr_int
   }
 
   return (
@@ -71,35 +85,55 @@ export default function Home() {
         <b>Module Path:</b>
         <a target="_blank" href={MODULE_URL}>{DAPP_ADDRESS}::{MODULE_NAME}</a>
         </p>
-      {/* <input
-        placeholder="Description for your DID"
+      <input
+        placeholder="Description for the Airdrop"
         className="mt-8 p-4 input input-bordered input-primary w-full"
         onChange={(e) =>
           updateFormInput({ ...formInput, description: e.target.value })
         }
       />
       <br></br>
+      <input
+        placeholder="Addresses for the Airdrop"
+        className="mt-8 p-4 input input-bordered input-primary w-full"
+        onChange={(e) =>
+          updateFormInput({ ...formInput, addresses: JSON.parse(e.target.value) })
+        }
+      />
       <br></br>
-      The type of DID Owner: &nbsp; &nbsp; &nbsp; &nbsp;
-      <select
-        value={formInput.did_type}
-        onChange={(e) => {
-          updateFormInput({ ...formInput, did_type: parseInt(e.target.value) })
-        }}
-      >
-        <option value="0">Individual</option>
-        <option value="1">DAO</option>
-      </select>
-      <br></br> */}
+      {/* TODO: [x] decimals translation */}
+      <input
+        placeholder="Moneys for the Airdrop(not average)"
+        className="mt-8 p-4 input input-bordered input-primary w-full"
+        onChange={(e) =>
+          updateFormInput({ ...formInput, moneys: str_to_int_batched(JSON.parse(e.target.value)) })
+        }
+      />
+      <br></br>
+      {/* TODO: [x] decimals translation */}
+      <input
+        placeholder="Moneys for the Airdrop(not average)"
+        className="mt-8 p-4 input input-bordered input-primary w-full"
+        onChange={(e) =>
+          updateFormInput({ ...formInput, money: apt_to_octos(parseFloat(e.target.value))})
+        }
+      />
       <button
         onClick={airdrop_coins_average_script}
         className={
           "btn btn-primary font-bold mt-4  text-white rounded p-4 shadow-lg"
         }>
-        Airdrop Coin
+        Airdrop Coin Average
       </button>
       <br></br>
       <br></br>
+      <button
+        onClick={airdrop_coins_not_average_script}
+        className={
+          "btn btn-primary font-bold mt-4  text-white rounded p-4 shadow-lg"
+        }>
+        Airdrop Coin Not Average
+      </button>
       <br></br>
     </div >
   );
