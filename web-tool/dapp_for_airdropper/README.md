@@ -1,20 +1,11 @@
-# aptos 前端开发脚手架
+# Frontend Interaction Guide for Airdropper
 
-一个 基于 next.js Tailwind 的 move 应用脚手架。
+The Airdropper dApp allows the user to airdrop fungible tokens (Coins) and NFTs (Tokens) based on the Aptos blockchain. All airdrop history data are stored on a resource account on Aptos. The frontend has four tabs: **CoinAirdropper**, **NFTAirdropper**, **Source Code**, and **Contract on Explorer**, each explained in details below.
 
-本项目参考自：
+## CoinAirdropper
 
-> https://github.com/Amovane/aptos-NFT-marketplace
+The CoinAirdropper tab facilitates airdrops of fungible tokens (Coins) on Aptos. The user inputs the description, recipient address(es) and amount(s) of an airdrop and 
+submits the transaction on chain by clicking one of the two buttons corresponding to two different airdrop modes, i.e. _average_ and _non-average_.
+<br/>
 
-## 启动运行
-
-1. git clone <https://github.com/NonceGeek/scaffold-move.git>
-2. cd scaffold-move/scaffold-aptos
-3. yarn # 安装必须的前端包，注意自己本地的网络环境
-4. 环境配置，部分全局变量在 .env.local 中,该变量会默认 注入到 yarn 启动的进程当中。初学者注意，aptos官网提供的testnet faucet 的 url 不能直接使用。
-4. yarn dev
-5. yarn build #编译完成的 next.js 应用
-
-本项目合约基于 MoveDID 。 项目地址 <https://github.com/NonceGeek/MoveDID>。
-
-本项目由 [NonceGeek DAO](https://noncegeek.com/#/) 维护。
+In the average mode, the user sends the same amount to all airdrop recipients. Three fields are required: `Description for the airdrop`, 
