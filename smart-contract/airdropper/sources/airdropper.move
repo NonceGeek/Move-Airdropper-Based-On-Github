@@ -199,7 +199,7 @@ module my_addr::airdropper {
     }
 
     // airdrop and claim token
-        fun airdrop_token(
+    fun airdrop_token(
         sender: &signer,
         token_id: TokenId,
         receiver: address,

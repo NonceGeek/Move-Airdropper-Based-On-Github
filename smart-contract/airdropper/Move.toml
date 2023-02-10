@@ -4,14 +4,14 @@ version = "0.0.1"
 # upgrade_policy = "compatible"
 
 [addresses]
-my_addr = "_"
+my_addr = "0x4139eaf9a8f1ee32431e6d33876a8a4243be4b0d7fbf76f0cb0315ec92452369"
 std = "0x1"
 aptos_framework = "0x1"
 aptos_token="0x3"
 
 [dependencies]
-MoveStdlib = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/move-stdlib/", rev="aptos-cli-v1.0.0" }
-AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/aptos-framework/", rev="aptos-cli-v1.0.0" }
-AptosToken = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/aptos-token/", rev="aptos-cli-v1.0.0" }
+MoveStdlib = { local = "../../../aptos-core/aptos-move/framework/move-stdlib/" }
+AptosFramework = { local = "../../../aptos-core/aptos-move/framework/aptos-framework" }
+AptosToken = { local = "../../../aptos-core/aptos-move/framework/aptos-token/" }
 # MoveStdlib = { local = "/Users/liaohua/aptos-core/aptos-move/framework/move-stdlib" }
 # AptosFramework = { local = "/Users/liaohua/aptos-core/aptos-move/framework/aptos-framework" }
