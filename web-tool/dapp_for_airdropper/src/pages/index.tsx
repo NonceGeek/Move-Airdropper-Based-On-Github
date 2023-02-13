@@ -239,12 +239,7 @@ export default function Home() {
         )}
       </div>
 
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-      <div className=" mt-96">
+      {/* <div className=" mt-96">
         <p>
           <b>Module Path:</b>
           <a target="_blank" href={MODULE_URL}>
@@ -312,7 +307,6 @@ export default function Home() {
               onChange={(e) => updateFormInput({ ...formInput, addresses: JSON.parse(e.target.value) })}
             />
             <br></br>
-            {/* TODO: [x] decimals translation */}
             <input
               placeholder="A Vector of Different Airdrop Amounts Corresponding to Each Address"
               className="mt-8 p-4 input input-bordered input-primary w-full"
@@ -329,7 +323,7 @@ export default function Home() {
             <br></br>
           </div>
         )}
-      </div>
+      </div> */}
     </>
   );
 }
