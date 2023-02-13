@@ -1,14 +1,15 @@
 import {
   DAPP_ADDRESS,
   MODULE_NAME,
-  MODULE_URL
+  MODULE_URL, 
+  APTOS_NODE_URL
 } from "../config/constants";
 import { useWallet } from "@manahippo/aptos-wallet-adapter";
 import { useState } from "react";
 import React from "react";
 
 export default function Home() {
-
+  
   const { account, signAndSubmitTransaction } = useWallet();
   const [component, setComponent] = useState<string>("airdrop_same_amount");
   const [formInput, updateFormInput] = useState<{

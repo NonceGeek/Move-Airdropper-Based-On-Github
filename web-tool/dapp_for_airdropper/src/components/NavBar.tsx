@@ -4,8 +4,13 @@ import { AptosConnect } from "./AptosConnect";
 import {
   MODULE_URL
 } from "../config/constants";
+import { useWallet } from "@manahippo/aptos-wallet-adapter";
+import { DAPP_ADDRESS } from "../config/constants";
 
 export function NavBar() {
+
+  const { account, signAndSubmitTransaction } = useWallet();
+  
   return (
     <nav className="navbar py-4 px-4 bg-base-100">
       <div className="flex-1">
@@ -20,7 +25,9 @@ export function NavBar() {
             <a href="https://github.com/NonceGeek/Airdropper-Based-On-Github" target="_blank">Source Code</a>
             <a href={MODULE_URL} target="_blank">Contract on Explorer</a>
           </li>
-          <NavItem href="/other_utils" title="Other Utils" />
+          {account?.address===DAPP_ADDRESS && 
+            <NavItem href="/other_utils" title="Other Utils" />
+          }
         </ul>
       </div>
       <AptosConnect />
