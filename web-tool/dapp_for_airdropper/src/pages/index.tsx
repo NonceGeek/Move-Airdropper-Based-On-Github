@@ -139,7 +139,7 @@ export default function Home() {
         {component === 'airdrop_same_amount' && (
           <div className=" w-full flex flex-wrap justify-center">
             <input
-              placeholder="Description for the Airdrop"
+              placeholder="Airdrop Description"
               className="mt-8 p-4 input input-bordered input-primary w-full"
               onChange={(e) => updateFormInput({ ...formInput, description: e.target.value })}
             />
@@ -152,7 +152,7 @@ export default function Home() {
               return (
                 <div className="w-full flex justify-between" key={index}>
                   <input
-                    placeholder="Addresses for the Airdrop"
+                    placeholder="Airdrop Address"
                     className="mt-8 p-4 input input-bordered input-primary w-full mr-1"
                     onChange={(e) => updateAddressList(e.target.value, index)}
                   />
@@ -189,7 +189,7 @@ export default function Home() {
         {component === 'airdrop_different_amount' && (
           <div className=" w-full flex flex-wrap justify-center">
             <input
-              placeholder="Description for the Airdrop"
+              placeholder="Airdrop Description"
               className="mt-8 p-4 input input-bordered input-primary w-full"
               onChange={(e) => updateFormInput({ ...formInput, description: e.target.value })}
             />
@@ -197,13 +197,13 @@ export default function Home() {
               return (
                 <div className="w-full flex justify-between" key={index}>
                   <input
-                    placeholder="Addresses for the Airdrop"
+                    placeholder="Airdrop Address"
                     className="mt-8 p-4 input input-bordered input-primary w-[45%]"
                     onChange={(e) => updateAddressList(e.target.value, index)}
                   />
                   {/* TODO: [x] decimals translation */}
                   <input
-                    placeholder="A Vector of Different Airdrop Amounts Corresponding to Each Address"
+                    placeholder="Airdrop Amount"
                     className="mt-8 p-4 input input-bordered input-primary w-[45%]"
                     onChange={
                       (e) => updateAccountList(e.target.value, index)

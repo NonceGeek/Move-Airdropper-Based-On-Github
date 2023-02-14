@@ -173,7 +173,7 @@ export default function Home() {
         placeholder="NFT Airdrop IDs"
         className="mt-8 p-4 input input-bordered input-primary w-full"
         onChange={(e) =>
-            updateFormInput({ ...formInput, addresses: JSON.parse(e.target.value) })
+            updateFormInput({ ...formInput, airdrop_ids: JSON.parse(e.target.value) })
         }
         />
         <br></br>
