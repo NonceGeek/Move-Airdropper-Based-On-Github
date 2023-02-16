@@ -64,7 +64,7 @@ export default function Home() {
 
         <div className="w-full flex justify-between">
             <input
-                placeholder="Airdrop Address"
+                placeholder="Github IDs delimited by comma"
                 className="mt-8 p-4 input input-bordered input-primary w-full mr-1"
                 onChange={(e: any) => setGithubIds(parseGithubIds(e.target.value))}
             />
