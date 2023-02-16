@@ -98,9 +98,11 @@ export default function Home() {
     };
   }
   useEffect(() => {
-    const address = JSON.parse(addressSession as string);
-    if (address.length > 0) {
-      setAirdropAddresses([...address]);
+    if (addressSession) {
+      const address = JSON.parse(addressSession as string);
+      if (address.length > 0) {
+        setAirdropAddresses([...address]);
+      }
     }
   }, [addressSession]);
   return (

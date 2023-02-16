@@ -137,9 +137,11 @@ export default function Home() {
     return num_apt * 100_000_000;
   }
   useEffect(() => {
-    const address = JSON.parse(addressSession as string);
-    if (address.length > 0) {
-      setAirdropAddresses([...address]);
+    if (addressSession) {
+      const address = JSON.parse(addressSession as string);
+      if (address.length > 0) {
+        setAirdropAddresses([...address]);
+      }
     }
   }, [addressSession]);
   return (
