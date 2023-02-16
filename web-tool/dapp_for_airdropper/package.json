@@ -13,6 +13,8 @@
     "@solana/web3.js": "^1.66.2",
     "@supabase/supabase-js": "^1.35.6",
     "@types/mime": "^3.0.1",
+    "ahooks": "^3.7.4",
+    "aptos": "^1.6.0",
     "axios": "^0.27.2",
     "daisyui": "^2.24.0",
     "dotenv": "^16.0.1",
@@ -22,7 +24,8 @@
     "nft.storage": "^7.0.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-select": "^5.7.0"
+    "react-select": "^5.7.0",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
     "@types/node": "17.0.35",

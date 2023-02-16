@@ -1,7 +1,7 @@
-import { useWallet } from "@manahippo/aptos-wallet-adapter";
-import { useContext } from "react";
-import { ModalContext } from "./ModalContext";
-import { WalletModal } from "./WalletModal";
+import { useWallet } from '@manahippo/aptos-wallet-adapter';
+import { useContext } from 'react';
+import { ModalContext } from './ModalContext';
+import { WalletModal } from './WalletModal';
 
 export function AptosConnect() {
   const { account } = useWallet();
@@ -14,18 +14,16 @@ export function AptosConnect() {
           className="btn btn-primary w-48"
           onClick={() => setModalState({ ...modalState, walletModal: true })}
           style={{
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            display: "inline",
-          }}
-        >
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            display: 'inline',
+          }}>
           {account!.address!.toString()!}
         </button>
       ) : (
         <button
-          className="btn"
-          onClick={() => setModalState({ ...modalState, walletModal: true })}
-        >
+          className="btn btn-primary font-bold text-white rounded p-4 shadow-lg bg-[#7243F1]"
+          onClick={() => setModalState({ ...modalState, walletModal: true })}>
           Connect wallet
         </button>
       )}
