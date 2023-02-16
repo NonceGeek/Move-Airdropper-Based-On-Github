@@ -1,12 +1,14 @@
 import { DAPP_ADDRESS, MODULE_NAME, MODULE_URL } from '../config/constants';
 import { useWallet } from '@manahippo/aptos-wallet-adapter';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { Uint32 } from '@martiandao/aptos-web3-bip44.js/dist/bcs';
-
+import { useSessionStorage } from 'react-use';
 export default function Home() {
   const { account, signAndSubmitTransaction } = useWallet();
   const [component, setComponent] = useState<string>('airdrop_same_amount');
+  const [addressSession, setAddressSession] = useSessionStorage('airdropAddresses');
+  const [airdropAddresses, setAirdropAddresses] = useState<Array<string>>([]);
   // NOTE ：这样设计存在数据污染，建议后期迭代，将不同接口数据分离开
   /*
     @solution：切换tab时，进行一次初始化
@@ -72,12 +74,42 @@ export default function Home() {
       }
     }
   };
+  const fillAllAddress = () => {
+    if (component === 'airdrop_same_amount') {
+      formInput.addresses = [...airdropAddresses];
+      updateFormInput({ ...formInput, ...formInput.addresses });
+    }
+    if (component === 'airdrop_different_amount') {
+      formInput.addresses = [...airdropAddresses];
+      formInput.moneys = [];
+      airdropAddresses.map(() => {
+        formInput.moneys.push('');
+      });
+      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys });
+    }
+  };
+
+  const resetAllAddresses = () => {
+    if (component === 'airdrop_same_amount') {
+      formInput.addresses = [''];
+      updateFormInput({ ...formInput, ...formInput.addresses });
+    }
+    if (component === 'airdrop_different_amount') {
+      formInput.addresses = [''];
+      formInput.moneys = [''];
+      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys });
+    }
+  };
   async function airdrop_coins_average_script() {
-    await signAndSubmitTransaction(do_airdrop_coins_average_script(), { gas_unit_price: 100 });
+    console.log(do_airdrop_coins_average_script());
+
+    // await signAndSubmitTransaction(do_airdrop_coins_average_script(), { gas_unit_price: 100 });
   }
 
   async function airdrop_coins_not_average_script() {
-    await signAndSubmitTransaction(do_airdrop_coins_not_average_script(), { gas_unit_price: 100 });
+    console.log(do_airdrop_coins_not_average_script());
+
+    // await signAndSubmitTransaction(do_airdrop_coins_not_average_script(), { gas_unit_price: 100 });
   }
 
   // TODO [x] Generate Funcs by ABI
@@ -104,7 +136,12 @@ export default function Home() {
   function apt_to_octos(num_apt: number) {
     return num_apt * 100_000_000;
   }
-
+  useEffect(() => {
+    const address = JSON.parse(addressSession as string);
+    if (address.length > 0) {
+      setAirdropAddresses([...address]);
+    }
+  }, [addressSession]);
   return (
     <>
       <div className=" p-4 w-[60%] m-auto flex flex-wrap shadow-2xl opacity-80 mb-10 ">
@@ -166,6 +203,7 @@ export default function Home() {
                     placeholder="Airdrop Address"
                     className="mt-8 p-4 input input-bordered input-primary w-full mr-1"
                     onChange={(e) => updateAddressList(e.target.value, index)}
+                    value={item}
                   />
                   {index === formInput.addresses.length - 1 && (
                     <button
@@ -180,6 +218,18 @@ export default function Home() {
               );
             })}
             <div className="mt-8  w-full flex justify-end">
+              {airdropAddresses.length > 0 && (
+                <button
+                  onClick={fillAllAddress}
+                  className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
+                  Fill All Addresses
+                </button>
+              )}
+              <button
+                onClick={resetAllAddresses}
+                className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
+                Reset All Addresses
+              </button>
               <button
                 onClick={addInput}
                 className={
@@ -211,6 +261,7 @@ export default function Home() {
                     placeholder="Airdrop Address"
                     className="mt-8 p-4 input input-bordered input-primary w-[68%]"
                     onChange={(e) => updateAddressList(e.target.value, index)}
+                    value={item}
                   />
                   {/* TODO: [x] decimals translation */}
                   <input
@@ -231,6 +282,18 @@ export default function Home() {
               );
             })}
             <div className="mt-8  w-full flex justify-end">
+              {airdropAddresses.length > 0 && (
+                <button
+                  onClick={fillAllAddress}
+                  className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
+                  Fill All Addresses
+                </button>
+              )}
+              <button
+                onClick={resetAllAddresses}
+                className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
+                Reset All Addresses
+              </button>
               <button
                 onClick={addInput}
                 className={

@@ -1,12 +1,14 @@
 import { DAPP_ADDRESS, MODULE_NAME, MODULE_URL } from '../config/constants';
 import { useWallet } from '@manahippo/aptos-wallet-adapter';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { Uint32 } from '@martiandao/aptos-web3-bip44.js/dist/bcs';
-
+import { useSessionStorage } from 'react-use';
 export default function Home() {
   const { account, signAndSubmitTransaction } = useWallet();
   const [component, setComponent] = useState<string>('airdrop_nft');
+  const [addressSession, setAddressSession] = useSessionStorage('airdropAddresses');
+  const [airdropAddresses, setAirdropAddresses] = useState<Array<string>>([]);
   const [formInput, updateFormInput] = useState<{
     addresses: Array<string>;
     creator: string;
@@ -59,7 +61,15 @@ export default function Home() {
       alert('addressList length is not equal zero');
     }
   };
+  const fillAllAddress = () => {
+    formInput.addresses = [...airdropAddresses];
+    updateFormInput({ ...formInput, ...formInput.addresses });
+  };
 
+  const resetAllAddresses = () => {
+    formInput.addresses = [''];
+    updateFormInput({ ...formInput, ...formInput.addresses });
+  };
   async function airdrop_tokens_script() {
     await signAndSubmitTransaction(do_airdrop_tokens_script(), { gas_unit_price: 100 });
   }
@@ -87,7 +97,12 @@ export default function Home() {
       arguments: [airdrop_ids],
     };
   }
-
+  useEffect(() => {
+    const address = JSON.parse(addressSession as string);
+    if (address.length > 0) {
+      setAirdropAddresses([...address]);
+    }
+  }, [addressSession]);
   return (
     <>
       <div className=" p-4 w-[60%] m-auto flex flex-wrap shadow-2xl opacity-80 mb-10 ">
@@ -139,6 +154,7 @@ export default function Home() {
                     placeholder="Addresses for the Airdrop"
                     className="mt-8 p-4 input input-bordered input-primary w-full mr-1"
                     onChange={(e) => updateAddressList(e.target.value, index)}
+                    value={item}
                   />
                   {index === formInput.addresses.length - 1 && (
                     <button
@@ -153,6 +169,18 @@ export default function Home() {
               );
             })}
             <div className="mt-8  w-full flex justify-end">
+              {airdropAddresses.length > 0 && (
+                <button
+                  onClick={fillAllAddress}
+                  className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
+                  Fill All Addresses
+                </button>
+              )}
+              <button
+                onClick={resetAllAddresses}
+                className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
+                Reset All Addresses
+              </button>
               <button
                 onClick={addInput}
                 className={
