@@ -205,6 +205,12 @@ export default function Home() {
                     onChange={(e) => updateAddressList(e.target.value, index)}
                     value={item}
                   />
+                  {index != formInput.addresses.length - 1 && (
+                    <div
+                      className={
+                        'mt-8  font-bold text-white  w-[50px] flex justify-center items-center text-[30px]'
+                      }></div>
+                  )}
                   {index === formInput.addresses.length - 1 && (
                     <button
                       onClick={subInput}
@@ -269,6 +275,12 @@ export default function Home() {
                     className="mt-8 p-4 input input-bordered input-primary"
                     onChange={(e) => updateMoneys(e.target.value, index)}
                   />
+                  {index != formInput.addresses.length - 1 && (
+                    <div
+                      className={
+                        'mt-8  font-bold text-white  w-[50px] flex justify-center items-center text-[30px]'
+                      }></div>
+                  )}
                   {index === formInput.addresses.length - 1 && (
                     <button
                       onClick={subInput}

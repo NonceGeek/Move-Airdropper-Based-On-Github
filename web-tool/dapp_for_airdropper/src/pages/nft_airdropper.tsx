@@ -156,6 +156,12 @@ export default function Home() {
                     onChange={(e) => updateAddressList(e.target.value, index)}
                     value={item}
                   />
+                  {index != formInput.addresses.length - 1 && (
+                    <div
+                      className={
+                        'mt-8  font-bold text-white  w-[50px] flex justify-center items-center text-[30px]'
+                      }></div>
+                  )}
                   {index === formInput.addresses.length - 1 && (
                     <button
                       onClick={subInput}
