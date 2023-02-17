@@ -52,11 +52,8 @@ The installation guide is for users who want to deploy their own contract on cha
 https://www.youtube.com/watch?v=Uk-FaoZ59BQ
 
 #### Get airdrop Addresses
-![demo](https://user-images.githubusercontent.com/57781136/219634371-1405d545-54f6-4528-90e5-f4bc213c30ec.gif)
-
+![demo](https://user-images.githubusercontent.com/57781136/219691143-337e7d0c-9f0b-4093-a391-2123d769fb5d.gif)
 #### Coin Airdropper
-![demo1](https://user-images.githubusercontent.com/57781136/219634585-de1dc431-d1ef-492f-9939-e81bb1598596.gif)
-
+[![demo1.gif](https://i.postimg.cc/1zTwqrT6/demo1.gif)](https://postimg.cc/1gG8xwy5)
 #### NFT Airdropper
-![demo2](https://user-images.githubusercontent.com/57781136/219636705-087c21c4-6dee-4ae9-88e5-46d0220222bd.gif)
-
+[![demo2.gif](https://i.postimg.cc/DyLhkfnK/demo2.gif)](https://postimg.cc/vcYk5s4P)
