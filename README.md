@@ -56,4 +56,4 @@ https://www.youtube.com/watch?v=Uk-FaoZ59BQ
 #### Coin Airdropper
 [![demo1.gif](https://i.postimg.cc/1zTwqrT6/demo1.gif)](https://postimg.cc/1gG8xwy5)
 #### NFT Airdropper
-[![demo2.gif](https://i.postimg.cc/DyLhkfnK/demo2.gif)](https://postimg.cc/vcYk5s4P)
+![demo2](https://user-images.githubusercontent.com/57781136/219694207-2bea3bd6-1052-43ad-815c-c55cf96e8086.gif)
