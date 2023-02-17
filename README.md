@@ -13,7 +13,7 @@ Important Links:
 >
 > Contract on Testnet: 
 >
-> TODO
+> [TODO](https://explorer.aptoslabs.com/account/0xdd3adff476fef28e9a3811c62e09b194e4aa8bf06ec8e8a3f16a600e937e6b0f/transactions)
 
 ## 0x01 Introduction
 
