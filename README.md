@@ -45,7 +45,7 @@ The installation guide is for users who want to deploy their own contract on cha
 - Deploy the website locally or on a remote host using command for example `yarn dev`.
 
 
-## 0x04 Use Guide
+## 0x04 User Guide
 
 ### Project Introduction
 
