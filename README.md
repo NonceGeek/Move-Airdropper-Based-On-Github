@@ -7,13 +7,15 @@ Important Links:
 
 > dApp: https://airdropper.movedid.build
 >
+> Demo Video: https://youtu.be/Uk-FaoZ59BQ
+>
 > Contract on Mainnet:
 >
 > https://explorer.aptoslabs.com/account/500977ea8d9cc8dfac2a1d46530acdd0d35879eea150783d644e27372e0fb846/modules?network=mainnet
 >
 > Contract on Testnet: 
 >
-> [TODO](https://explorer.aptoslabs.com/account/0xdd3adff476fef28e9a3811c62e09b194e4aa8bf06ec8e8a3f16a600e937e6b0f/transactions)
+> https://explorer.aptoslabs.com/account/0xdd3adff476fef28e9a3811c62e09b194e4aa8bf06ec8e8a3f16a600e937e6b0f/transactions
 
 ## 0x01 Introduction
 
@@ -44,8 +46,6 @@ The installation guide is for users who want to deploy their own contract on cha
 
 
 ## 0x04 Use Guide
-Refer to our demo video at: <URL>
-
 
 // TODO: it's good to insert some gif!
 
