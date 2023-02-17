@@ -29,11 +29,23 @@ Therefore, designing a DAO plugin system based on Github and Move chains like Ap
 
 ![DAO System based on Github Layers](https://p.ipic.vip/s01ak9.png)
 
-## 0x03 Installing Guide
+## 0x03 Installation Guide
 
-// TODO
+The installation guide is for users who want to deploy their own contract on chain and hold airdropped NFTs in their own resource accounts before the NFTs are claimed by their recipients. To install:
+- Make sure you have Aptos CLI and its dependencies installed.
+- Clone this repo.
+- Navigate your current directory to `smart-contract/airdropper` folder.
+- Change `my_addr` field in `Move.toml` to your deployer address.
+- In Aptos CLI, run `aptos move compile` and then run `aptos move publish --private-key <private key of deployer address> --url <node url of aptos client>` and wait for the deployment success transaction message.
+- Navigate your current directory to `web-tool/dapp_for_airdropper` folder.
+- Customize environment variables including faucet URL, node URL, and DAPP address in `.env` file and `config/constants.ts` file. Note that faucet and node URL need to match network (e.g. mainnet, testnet) and that DAPP address is the same as deployer address. 
+- Install all web client dependencies using `yarn` or `npm install`.
+- Deploy the website locally or on a remote host using command for example `yarn dev`.
+
 
 ## 0x04 Use Guide
+Refer to our demo video at: <URL>
+
 
 // TODO: it's good to insert some gif!
 
