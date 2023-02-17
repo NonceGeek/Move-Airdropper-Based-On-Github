@@ -47,5 +47,16 @@ The installation guide is for users who want to deploy their own contract on cha
 
 ## 0x04 Use Guide
 
-// TODO: it's good to insert some gif!
+### Project Introduction
+
+https://www.youtube.com/watch?v=Uk-FaoZ59BQ
+
+#### Get airdrop Addresses
+![demo](https://user-images.githubusercontent.com/57781136/219634371-1405d545-54f6-4528-90e5-f4bc213c30ec.gif)
+
+#### Coin Airdropper
+![demo1](https://user-images.githubusercontent.com/57781136/219634585-de1dc431-d1ef-492f-9939-e81bb1598596.gif)
+
+#### NFT Airdropper
+![demo2](https://user-images.githubusercontent.com/57781136/219636705-087c21c4-6dee-4ae9-88e5-46d0220222bd.gif)
 
