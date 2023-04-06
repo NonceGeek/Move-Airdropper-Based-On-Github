@@ -9,13 +9,13 @@ Important Links:
 >
 > Demo Video: https://youtu.be/Uk-FaoZ59BQ
 >
-> Contract on Mainnet:
+> Contract on Mainnet(Only Coin):
 >
 > https://explorer.aptoslabs.com/account/500977ea8d9cc8dfac2a1d46530acdd0d35879eea150783d644e27372e0fb846/modules?network=mainnet
 >
 > Contract on Testnet: 
 >
-> https://explorer.aptoslabs.com/account/0xdd3adff476fef28e9a3811c62e09b194e4aa8bf06ec8e8a3f16a600e937e6b0f/transactions
+> https://explorer.aptoslabs.com/account/0xdd3adff476fef28e9a3811c62e09b194e4aa8bf06ec8e8a3f16a600e937e6b0f/?network=testnet
 
 ## 0x01 Introduction
 
