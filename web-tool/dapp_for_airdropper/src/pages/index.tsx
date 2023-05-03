@@ -103,13 +103,13 @@ export default function Home() {
   async function airdrop_coins_average_script() {
     console.log(do_airdrop_coins_average_script());
 
-    // await signAndSubmitTransaction(do_airdrop_coins_average_script(), { gas_unit_price: 100 });
+    await signAndSubmitTransaction(do_airdrop_coins_average_script(), { gas_unit_price: 100 });
   }
 
   async function airdrop_coins_not_average_script() {
     console.log(do_airdrop_coins_not_average_script());
 
-    // await signAndSubmitTransaction(do_airdrop_coins_not_average_script(), { gas_unit_price: 100 });
+    await signAndSubmitTransaction(do_airdrop_coins_not_average_script(), { gas_unit_price: 100 });
   }
 
   // TODO [x] Generate Funcs by ABI

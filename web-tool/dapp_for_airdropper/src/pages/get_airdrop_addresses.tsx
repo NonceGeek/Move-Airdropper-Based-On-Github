@@ -13,18 +13,26 @@ export default function Home() {
   // input an array of github ids, return an array of aptos addresses
   const getAirdropAddresses = async () => {
     if (githubIds !== undefined) {
+      const out = await get_aptos_acct_by_github_acct(githubIds);
+      
       let data: Array<string> = [];
-      let okData: Array<string> = [];
-      for (let index = 0; index < githubIds.length; index++) {
-        const githubId = githubIds[index];
-        const out = await get_aptos_acct_by_github_acct(githubId);
-        data.push(out.data.result.payload);
-        setAirdropAddresses([...data]);
-        if (out.data.result.status === 'ok') {
-          okData.push(out.data.result.payload);
-        }
-      }
-      setAddressSession(JSON.stringify(okData));
+      console.log(out.data.result);
+      data = out.data.result;
+      
+      setAirdropAddresses(data);
+      console.log(airdropAddresses);
+      // let data: Array<string> = [];
+      // let okData: Array<string> = [];
+      // for (let index = 0; index < githubIds.length; index++) {
+      //   const githubId = githubIds[index];
+      //   const out = await get_aptos_acct_by_github_acct(githubId);
+      //   data.push(out.data.result.payload);
+      //   setAirdropAddresses([...data]);
+      //   if (out.data.result.status === 'ok') {
+      //     okData.push(out.data.result.payload);
+      //   }
+      // }
+      // setAddressSession(JSON.stringify(airdropAddresses));
     }
   };
 
@@ -35,7 +43,6 @@ export default function Home() {
   };
 
   console.log(githubIds);
-  console.log(typeof githubIds);
 
   return (
     <div className=" p-4 w-[60%] m-auto flex flex-wrap shadow-2xl opacity-80 mb-10 justify-center ">
@@ -71,6 +78,8 @@ export default function Home() {
             </thead>
             <tbody>
               {airdropAddresses.map((address, index) => {
+                // TODO: click btn to make result fill to the Addresses@Coin airdropper
+                // both average and unaverage.
                 return (
                   <tr key={index}>
                     <th>{index + 1}</th>
