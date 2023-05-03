@@ -15,7 +15,7 @@ export function NavBar() {
         <ul className="menu menu-horizontal p-0 ml-5">
           <NavItem href="/" title="Coin Airdropper" />
           {/* <NavItem href="/nft_airdropper" title="NFT Airdropper" /> */}
-          <NavItem href="/get_airdrop_addresses" title="Get Airdrop Addresses" />
+          <NavItem href="/get_airdrop_addresses" title="Get Addresses by Github Accts" />
           {/* <NavItem href="/did_querier" title="DIDQuerier" /> */}
           <li className="font-sans font-semibold text-lg">
             <a href="https://github.com/NonceGeek/Airdropper-Based-On-Github" target="_blank">Source Code</a>

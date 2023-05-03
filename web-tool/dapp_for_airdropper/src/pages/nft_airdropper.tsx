@@ -177,13 +177,6 @@ export default function Home() {
               );
             })}
             <div className="mt-8  w-full flex justify-end">
-              {airdropAddresses.length > 0 && (
-                <button
-                  onClick={fillAllAddress}
-                  className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
-                  Fill All Addresses
-                </button>
-              )}
               <button
                 onClick={resetAllAddresses}
                 className={'btn btn-primary font-bold  text-white rounded p-4 shadow-lg mr-5'}>
