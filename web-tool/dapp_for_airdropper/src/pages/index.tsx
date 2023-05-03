@@ -1,149 +1,154 @@
-import { DAPP_ADDRESS, MODULE_NAME, MODULE_URL } from '../config/constants';
-import { useWallet } from '@manahippo/aptos-wallet-adapter';
-import { useState, useEffect } from 'react';
-import React from 'react';
-import { Uint32 } from '@martiandao/aptos-web3-bip44.js/dist/bcs';
-import { useSessionStorage } from 'react-use';
+import { DAPP_ADDRESS, MODULE_NAME, MODULE_URL } from '../config/constants'
+import { useWallet } from '@manahippo/aptos-wallet-adapter'
+import { useState, useEffect } from 'react'
+import React from 'react'
+import { Uint32 } from '@martiandao/aptos-web3-bip44.js/dist/bcs'
+import { useSessionStorage } from 'react-use'
 export default function Home() {
-  const { account, signAndSubmitTransaction } = useWallet();
-  const [component, setComponent] = useState<string>('airdrop_same_amount');
-  const [addressSession, setAddressSession] = useSessionStorage('airdropAddresses');
-  const [airdropAddresses, setAirdropAddresses] = useState<Array<string>>([]);
+  const { account, signAndSubmitTransaction } = useWallet()
+  const [component, setComponent] = useState<string>('airdrop_same_amount')
+  const [addressSession, setAddressSession] = useSessionStorage('airdropAddresses')
+  const [airdropAddresses, setAirdropAddresses] = useState<Array<string>>([])
   // NOTE ：这样设计存在数据污染，建议后期迭代，将不同接口数据分离开
   /*
     @solution：切换tab时，进行一次初始化
     @defect：两边数据无法共享，切换tab后，数据清零无法保存
   */
   const [formInput, updateFormInput] = useState<{
-    addresses: Array<string>;
-    description: string;
-    moneys: Array<Number | string>;
-    money: number;
+    addresses: Array<string>
+    description: string
+    moneys: Array<Number | string>
+    money: number
   }>({
     addresses: [''],
     description: 'a simple airdrop!',
     moneys: [''],
     money: 0,
-  });
+  })
 
   const InitFormInput = () => {
-    formInput.addresses = [''];
-    formInput.description = 'a simple airdrop!';
-    formInput.moneys = [''];
-    formInput.money = 0;
-    updateFormInput({ ...formInput });
-  };
+    formInput.addresses = ['']
+    formInput.description = 'a simple airdrop!'
+    formInput.moneys = ['']
+    formInput.money = 0
+    updateFormInput({ ...formInput })
+  }
 
   const updateAddressList = (address: string, index: Uint32) => {
-    formInput.addresses[index] = address;
-    updateFormInput({ ...formInput, ...formInput.addresses });
-  };
+    formInput.addresses[index] = address
+    updateFormInput({ ...formInput, ...formInput.addresses })
+  }
 
   const updateMoneys = (money: string, index: Uint32) => {
-    formInput.moneys[index] = apt_to_octos(parseFloat(money));
-    updateFormInput({ ...formInput, ...formInput.moneys });
-  };
+    formInput.moneys[index] = apt_to_octos(parseFloat(money))
+    updateFormInput({ ...formInput, ...formInput.moneys })
+  }
 
   const addInput = () => {
     if (component === 'airdrop_same_amount') {
-      formInput.addresses.push('');
-      updateFormInput({ ...formInput, ...formInput.addresses });
+      formInput.addresses.push('')
+      updateFormInput({ ...formInput, ...formInput.addresses })
     }
     if (component === 'airdrop_different_amount') {
-      formInput.addresses.push('');
-      formInput.moneys.push('');
-      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys });
+      formInput.addresses.push('')
+      formInput.moneys.push('')
+      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys })
     }
-  };
+  }
   const subInput = () => {
     if (component === 'airdrop_same_amount') {
       if (formInput.addresses.length > 1) {
-        formInput.addresses.pop();
-        updateFormInput({ ...formInput, ...formInput.addresses });
+        formInput.addresses.pop()
+        updateFormInput({ ...formInput, ...formInput.addresses })
       } else {
-        alert('addressList length is not equal zero');
+        alert('addressList length is not equal zero')
       }
     }
     if (component === 'airdrop_different_amount') {
       if (formInput.addresses.length > 1) {
-        formInput.addresses.pop();
-        formInput.moneys.pop();
-        updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys });
+        formInput.addresses.pop()
+        formInput.moneys.pop()
+        updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys })
       } else {
-        alert('addressList length is not equal zero');
+        alert('addressList length is not equal zero')
       }
     }
-  };
+  }
   const fillAllAddress = () => {
     if (component === 'airdrop_same_amount') {
-      formInput.addresses = [...airdropAddresses];
-      updateFormInput({ ...formInput, ...formInput.addresses });
+      formInput.addresses = [...airdropAddresses]
+      updateFormInput({ ...formInput, ...formInput.addresses })
     }
     if (component === 'airdrop_different_amount') {
-      formInput.addresses = [...airdropAddresses];
-      formInput.moneys = [];
+      formInput.addresses = [...airdropAddresses]
+      formInput.moneys = []
       airdropAddresses.map(() => {
-        formInput.moneys.push('');
-      });
-      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys });
+        formInput.moneys.push('')
+      })
+      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys })
     }
-  };
+  }
 
   const resetAllAddresses = () => {
     if (component === 'airdrop_same_amount') {
-      formInput.addresses = [''];
-      updateFormInput({ ...formInput, ...formInput.addresses });
+      formInput.addresses = ['']
+      updateFormInput({ ...formInput, ...formInput.addresses })
     }
     if (component === 'airdrop_different_amount') {
-      formInput.addresses = [''];
-      formInput.moneys = [''];
-      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys });
+      formInput.addresses = ['']
+      formInput.moneys = ['']
+      updateFormInput({ ...formInput, ...formInput.addresses, ...formInput.moneys })
     }
-  };
+  }
   async function airdrop_coins_average_script() {
-    console.log(do_airdrop_coins_average_script());
+    console.log(do_airdrop_coins_average_script())
 
-    await signAndSubmitTransaction(do_airdrop_coins_average_script(), { gas_unit_price: 100 });
+    await signAndSubmitTransaction(do_airdrop_coins_average_script(), { gas_unit_price: 100 })
   }
 
   async function airdrop_coins_not_average_script() {
-    console.log(do_airdrop_coins_not_average_script());
+    console.log(do_airdrop_coins_not_average_script())
 
-    await signAndSubmitTransaction(do_airdrop_coins_not_average_script(), { gas_unit_price: 100 });
+    await signAndSubmitTransaction(do_airdrop_coins_not_average_script(), { gas_unit_price: 100 })
   }
 
   // TODO [x] Generate Funcs by ABI
   function do_airdrop_coins_average_script() {
-    const { addresses, description, moneys, money } = formInput;
+    const { addresses, description, moneys, money } = formInput
     return {
       type: 'entry_function_payload',
       function: DAPP_ADDRESS + '::airdropper::airdrop_coins_average_script',
       type_arguments: ['0x1::aptos_coin::AptosCoin'],
       arguments: [description, addresses, money],
-    };
+    }
   }
 
   function do_airdrop_coins_not_average_script() {
-    const { addresses, description, moneys, money } = formInput;
+    const { addresses, description, moneys, money } = formInput
     return {
       type: 'entry_function_payload',
       function: DAPP_ADDRESS + '::airdropper::airdrop_coins_not_average_script',
       type_arguments: ['0x1::aptos_coin::AptosCoin'],
       arguments: [description, addresses, moneys],
-    };
+    }
   }
 
   function apt_to_octos(num_apt: number) {
-    return num_apt * 100_000_000;
+    return num_apt * 100_000_000
   }
   useEffect(() => {
     if (addressSession) {
-      const address = JSON.parse(addressSession as string);
+      const address = JSON.parse(addressSession as string)
       if (address.length > 0) {
-        setAirdropAddresses([...address]);
+        setAirdropAddresses([...address])
       }
     }
-  }, [addressSession]);
+  }, [addressSession])
+
+  useEffect(() => {
+    fillAllAddress()
+  }, [airdropAddresses, component])
+
   return (
     <>
       <div className=" p-4 w-[60%] m-auto flex flex-wrap shadow-2xl opacity-80 mb-10 ">
@@ -160,8 +165,8 @@ export default function Home() {
               <li className="w-full  flex justify-between">
                 <button
                   onClick={() => {
-                    InitFormInput();
-                    setComponent('airdrop_same_amount');
+                    InitFormInput()
+                    setComponent('airdrop_same_amount')
                   }}
                   className={
                     component === 'airdrop_same_amount'
@@ -172,8 +177,8 @@ export default function Home() {
                 </button>
                 <button
                   onClick={() => {
-                    InitFormInput();
-                    setComponent('airdrop_different_amount');
+                    InitFormInput()
+                    setComponent('airdrop_different_amount')
                   }}
                   className={
                     component === 'airdrop_different_amount'
@@ -223,7 +228,7 @@ export default function Home() {
                     </button>
                   )}
                 </div>
-              );
+              )
             })}
             <div className="mt-8  w-full flex justify-end">
               {airdropAddresses.length > 0 && (
@@ -293,7 +298,7 @@ export default function Home() {
                     </button>
                   )}
                 </div>
-              );
+              )
             })}
             <div className="mt-8  w-full flex justify-end">
               {airdropAddresses.length > 0 && (
@@ -326,5 +331,5 @@ export default function Home() {
         )}
       </div>
     </>
-  );
+  )
 }
