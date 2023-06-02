@@ -8,7 +8,7 @@ export default function Home() {
   const { account, signAndSubmitTransaction } = useWallet()
   const [component, setComponent] = useState<string>('airdrop_same_amount')
   const [addressSession, setAddressSession] = useSessionStorage('airdropAddresses')
-  const [airdropAddresses, setAirdropAddresses] = useState<Array<string>>([])
+  const [airdropAddresses, setAirdropAddresses] = useState<Array<string>>([''])
   // NOTE ：这样设计存在数据污染，建议后期迭代，将不同接口数据分离开
   /*
     @solution：切换tab时，进行一次初始化
@@ -207,7 +207,7 @@ export default function Home() {
               return (
                 <div className="w-full flex justify-between" key={index}>
                   <input
-                    placeholder="Airdrop Address"
+                    placeholder="Airdrop Receiving Address"
                     className="mt-8 p-4 input input-bordered input-primary w-full mr-1"
                     onChange={(e) => updateAddressList(e.target.value, index)}
                     value={item}
@@ -264,7 +264,7 @@ export default function Home() {
               return (
                 <div className="w-full flex justify-between" key={index}>
                   <input
-                    placeholder="Airdrop Address"
+                    placeholder="Airdrop Receiving Address"
                     className="mt-8 p-4 input input-bordered input-primary w-[68%]"
                     onChange={(e) => updateAddressList(e.target.value, index)}
                     value={item}
