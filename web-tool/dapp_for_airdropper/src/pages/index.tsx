@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react'
 import React from 'react'
 import { Uint32 } from '@martiandao/aptos-web3-bip44.js/dist/bcs'
 import { useSessionStorage } from 'react-use'
+
+const CoinArray = [
+  {
+    coinName: 'Aptos',
+    coinObject: '0x1::aptos_coin::AptosCoin',
+  },
+]
 export default function Home() {
   const { account, signAndSubmitTransaction } = useWallet()
   const [component, setComponent] = useState<string>('airdrop_same_amount')
@@ -19,19 +26,25 @@ export default function Home() {
     description: string
     moneys: Array<Number | string>
     money: number
+    coin: string
   }>({
     addresses: [''],
     description: 'a simple airdrop!',
     moneys: [''],
     money: 0,
+    coin: '',
   })
+
+  const [coinShow, setCoinShow] = useState<boolean>(false)
 
   const InitFormInput = () => {
     formInput.addresses = ['']
     formInput.description = 'a simple airdrop!'
     formInput.moneys = ['']
     formInput.money = 0
+    formInput.coin = ''
     updateFormInput({ ...formInput })
+    setCoinShow(false)
   }
 
   const updateAddressList = (address: string, index: Uint32) => {
@@ -114,21 +127,21 @@ export default function Home() {
 
   // TODO [x] Generate Funcs by ABI
   function do_airdrop_coins_average_script() {
-    const { addresses, description, moneys, money } = formInput
+    const { addresses, description, moneys, money, coin } = formInput
     return {
       type: 'entry_function_payload',
       function: DAPP_ADDRESS + '::airdropper::airdrop_coins_average_script',
-      type_arguments: ['0x1::aptos_coin::AptosCoin'],
+      type_arguments: [coin],
       arguments: [description, addresses, money],
     }
   }
 
   function do_airdrop_coins_not_average_script() {
-    const { addresses, description, moneys, money } = formInput
+    const { addresses, description, moneys, money, coin } = formInput
     return {
       type: 'entry_function_payload',
       function: DAPP_ADDRESS + '::airdropper::airdrop_coins_not_average_script',
-      type_arguments: ['0x1::aptos_coin::AptosCoin'],
+      type_arguments: [coin],
       arguments: [description, addresses, moneys],
     }
   }
@@ -194,9 +207,74 @@ export default function Home() {
         {component === 'airdrop_same_amount' && (
           <div className=" w-full flex flex-wrap justify-center">
             <input
+              placeholder="Select Coin"
+              className="mt-8 p-4 input input-bordered input-primary w-full"
+              onChange={(e) => {
+                updateFormInput({ ...formInput, coin: e.target.value })
+              }}
+              value={formInput.coin}
+              onFocus={() => setCoinShow(true)}
+            />
+            {coinShow && (
+              <div className="border border-[#7A40FA] w-full flex flex-col rounded-xl mt-1 text-base cursor-default text-[#B0B5BF]">
+                {CoinArray.map((item, index) => {
+                  if (CoinArray.length === 1) {
+                    return (
+                      <div
+                        key={index}
+                        className="p-4 rounded-xl hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                        onClick={() => {
+                          updateFormInput({ ...formInput, coin: item.coinObject })
+                          setCoinShow(false)
+                        }}>
+                        {item.coinName}
+                      </div>
+                    )
+                  }
+                  if (index === 0) {
+                    return (
+                      <div
+                        key={index}
+                        className="p-4 rounded-xl rounded-bl-none rounded-br-none hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                        onClick={() => {
+                          updateFormInput({ ...formInput, coin: item.coinObject })
+                          setCoinShow(false)
+                        }}>
+                        {item.coinName}
+                      </div>
+                    )
+                  }
+                  if (index === CoinArray.length - 1) {
+                    return (
+                      <div
+                        className="p-4 rounded-xl rounded-tl-none rounded-tr-none hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                        onClick={() => {
+                          updateFormInput({ ...formInput, coin: item.coinObject })
+                          setCoinShow(false)
+                        }}>
+                        {item.coinName}
+                      </div>
+                    )
+                  }
+                  return (
+                    <div
+                      className="p-4 hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                      onClick={() => {
+                        updateFormInput({ ...formInput, coin: item.coinObject })
+                        setCoinShow(false)
+                      }}>
+                      Coin
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            <input
               placeholder="Airdrop Description"
               className="mt-8 p-4 input input-bordered input-primary w-full"
               onChange={(e) => updateFormInput({ ...formInput, description: e.target.value })}
+              onFocus={() => setCoinShow(false)}
             />
             <input
               placeholder="Airdrop Amount to Each Address"
@@ -256,9 +334,73 @@ export default function Home() {
         {component === 'airdrop_different_amount' && (
           <div className=" w-full flex flex-wrap justify-center">
             <input
+              placeholder="Select Coin"
+              className="mt-8 p-4 input input-bordered input-primary w-full"
+              onChange={(e) => {
+                updateFormInput({ ...formInput, coin: e.target.value })
+              }}
+              value={formInput.coin}
+              onFocus={() => setCoinShow(true)}
+            />
+            {coinShow && (
+              <div className="border border-[#7A40FA] w-full flex flex-col rounded-xl mt-1 text-base cursor-default text-[#B0B5BF]">
+                {CoinArray.map((item, index) => {
+                  if (CoinArray.length === 1) {
+                    return (
+                      <div
+                        key={index}
+                        className="p-4 rounded-xl hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                        onClick={() => {
+                          updateFormInput({ ...formInput, coin: item.coinObject })
+                          setCoinShow(false)
+                        }}>
+                        {item.coinName}
+                      </div>
+                    )
+                  }
+                  if (index === 0) {
+                    return (
+                      <div
+                        key={index}
+                        className="p-4 rounded-xl rounded-bl-none rounded-br-none hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                        onClick={() => {
+                          updateFormInput({ ...formInput, coin: item.coinObject })
+                          setCoinShow(false)
+                        }}>
+                        {item.coinName}
+                      </div>
+                    )
+                  }
+                  if (index === CoinArray.length - 1) {
+                    return (
+                      <div
+                        className="p-4 rounded-xl rounded-tl-none rounded-tr-none hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                        onClick={() => {
+                          updateFormInput({ ...formInput, coin: item.coinObject })
+                          setCoinShow(false)
+                        }}>
+                        {item.coinName}
+                      </div>
+                    )
+                  }
+                  return (
+                    <div
+                      className="p-4 hover:bg-[#F1F1F2] hover:text-[#4B545F] hover:font-bold"
+                      onClick={() => {
+                        updateFormInput({ ...formInput, coin: item.coinObject })
+                        setCoinShow(false)
+                      }}>
+                      Coin
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+            <input
               placeholder="Airdrop Description"
               className="mt-8 p-4 input input-bordered input-primary w-full"
               onChange={(e) => updateFormInput({ ...formInput, description: e.target.value })}
+              onFocus={() => setCoinShow(false)}
             />
             {formInput.addresses.map((item, index) => {
               return (
