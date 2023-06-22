@@ -10,6 +10,14 @@ const CoinArray = [
     coinName: 'Aptos',
     coinObject: '0x1::aptos_coin::AptosCoin',
   },
+  {
+    coinName: 'zUSDC',
+    coinObject: '0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC',
+  },
+  {
+    coinName: 'zUSDT',
+    coinObject: '0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT',
+  },
 ]
 export default function Home() {
   const { account, signAndSubmitTransaction } = useWallet()
@@ -263,7 +271,7 @@ export default function Home() {
                         updateFormInput({ ...formInput, coin: item.coinObject })
                         setCoinShow(false)
                       }}>
-                      Coin
+                      {item.coinName}
                     </div>
                   )
                 })}
